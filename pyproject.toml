@@ -1,0 +1,19 @@
+[project]
+name = "yt-community-likes"
+version = "0.1.0"
+description = "Compare YouTube community post like counts and notify daily."
+requires-python = ">=3.10"
+dependencies = [
+  "requests>=2.31.0",
+  "beautifulsoup4>=4.12.3",
+  "PyYAML>=6.0.1",
+  "python-dotenv>=1.0.1",
+  "schedule>=1.2.1",
+]
+
+[project.scripts]
+yt-community-likes = "yt_community_likes.__main__:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"

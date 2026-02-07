@@ -1,0 +1,8 @@
+posts:
+  - "https://www.youtube.com/post/Ugkx..."
+  - "https://www.youtube.com/post/Ugkx..."
+notify:
+  method: "stdout"
+  # method: "slack"
+  # slack:
+  #   webhook_url: "https://hooks.slack.com/services/..."
