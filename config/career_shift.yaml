@@ -1,0 +1,100 @@
+# ===========================================
+# 転職・キャリアアカウント詳細設定
+# ===========================================
+
+account:
+  id: "career"
+  display_name: "キャリアの教科書｜転職×年収UP"
+  handle: "@career_shift_lab"
+  genre: "career"
+  language: "ja"
+
+# 環境変数名（.envから読み込み）
+credentials_env:
+  api_key: "CAREER_API_KEY"
+  api_secret: "CAREER_API_SECRET"
+  access_token: "CAREER_ACCESS_TOKEN"
+  access_token_secret: "CAREER_ACCESS_TOKEN_SECRET"
+  bearer_token: "CAREER_BEARER_TOKEN"
+
+# ペルソナ・声のトーン
+voice:
+  persona: "30代で2回転職して年収を400万→800万にした元営業マン。IT業界への転身経験あり。"
+  tone: "encouraging_professional"
+  first_person: "僕"
+  style_notes:
+    - "体験談ベースで語る"
+    - "具体的な数字（年収、期間）を多用"
+    - "共感→解決策の流れ"
+    - "読み手を否定しない"
+    - "語尾は「だよ」「だった」「してみて」などカジュアル敬語"
+  emoji_frequency: "low"  # 1-2個/投稿
+  prohibited_phrases:
+    - "絶対に"
+    - "誰でも簡単に"
+    - "100%"
+    - "楽して稼げる"
+
+# コンテンツ戦略
+content_strategy:
+  posts_per_day: 5
+  content_mix:
+    value_tip: 0.40       # 40% - キャリアTips、年収交渉、スキルアップ
+    engagement: 0.20      # 20% - 質問、アンケート、共感投稿
+    thread_starter: 0.15  # 15% - 連続ツイート（転職体験談等）
+    soft_sell: 0.15       # 15% - さりげないサービス言及
+    direct_promo: 0.10    # 10% - #PR付きアフィリエイト投稿
+
+# アフィリエイト設定
+affiliate:
+  asps:
+    primary: "A8.net"
+    secondary: "もしもアフィリエイト"
+  programs:
+    - name: "リクルートエージェント"
+      asp: "A8.net"
+      reward_per_conversion: 15000
+      target_conversions_monthly: 7
+      link_placeholder: "{RECRUIT_AGENT_LINK}"
+      description: "業界最大手の転職エージェント"
+    - name: "doda"
+      asp: "A8.net"
+      reward_per_conversion: 10000
+      target_conversions_monthly: 5
+      link_placeholder: "{DODA_LINK}"
+      description: "求人数No.2の転職サイト"
+    - name: "テックキャンプ"
+      asp: "A8.net"
+      reward_per_conversion: 25000
+      target_conversions_monthly: 2
+      link_placeholder: "{TECHCAMP_LINK}"
+      description: "エンジニア転職保証付きスクール"
+  monthly_revenue_target: 100000
+  conversion_flow: "ツイート → プロフィール → ブログLP → アフィリエイトリンク"
+
+# コンプライアンス
+compliance:
+  pr_label_format: "#PR"
+  pr_label_position: "beginning"
+  disclaimer_text: "※アフィリエイトリンクを含みます"
+
+# 投稿時間（JST）
+posting_times_jst:
+  - "07:00"
+  - "08:30"
+  - "12:15"
+  - "18:30"
+  - "21:00"
+
+# トピックローテーション
+topics:
+  - "年収交渉・給与UP"
+  - "面接対策"
+  - "職務経歴書・履歴書"
+  - "IT業界への転職"
+  - "副業・スキルアップ"
+  - "リモートワーク"
+  - "人脈・ネットワーキング"
+  - "キャリアプランニング"
+  - "ワークライフバランス"
+  - "転職エージェント活用法"

@@ -1,0 +1,64 @@
+# ===========================================
+# X アフィリエイトBot - 3アカウント統合設定
+# ===========================================
+
+accounts:
+  - id: career
+    name: "キャリアの教科書｜転職×年収UP"
+    handle: "@career_shift_lab"
+    genre: "転職・キャリア"
+    config_file: "career_shift.yaml"
+    enabled: true
+
+  - id: english
+    name: "学びハック｜英語×スキルUP"
+    handle: "@english_hack_jp"
+    genre: "オンライン英会話・教育"
+    config_file: "english_hack.yaml"
+    enabled: true
+
+  - id: subscrip
+    name: "サブスク探偵｜お得に楽しむ生活術"
+    handle: "@sub_entame_navi"
+    genre: "サブスク・VOD"
+    config_file: "sub_entame.yaml"
+    enabled: true
+
+# グローバル設定
+global:
+  timezone: "Asia/Tokyo"
+  max_posts_per_month: 500  # X API Free Plan上限
+  posts_per_day_per_account: 5
+  total_posts_per_day: 15   # 3アカウント合計
+
+# 投稿時間帯（JST）- アカウント共通ベース
+posting_schedule:
+  slot_1: "07:00"  # 朝の通勤時間
+  slot_2: "08:30"  # 出勤前
+  slot_3: "12:00"  # 昼休み
+  slot_4: "18:00"  # 帰宅時間
+  slot_5: "21:00"  # 夜のリラックスタイム
+
+# 週間テーマローテーション
+weekly_rotation:
+  monday:
+    theme: "モチベーション + Tips"
+    affiliate_ratio: 0.0
+  tuesday:
+    theme: "業界ニュース・トレンド"
+    affiliate_ratio: 0.0
+  wednesday:
+    theme: "ハウツー・詳細解説"
+    affiliate_ratio: 0.2
+  thursday:
+    theme: "Q&A・フォロワー交流"
+    affiliate_ratio: 0.0
+  friday:
+    theme: "おすすめ・ランキング"
+    affiliate_ratio: 0.4
+  saturday:
+    theme: "スレッド（詳細レビュー）"
+    affiliate_ratio: 0.2
+  sunday:
+    theme: "軽めのエンゲージメント"
+    affiliate_ratio: 0.0

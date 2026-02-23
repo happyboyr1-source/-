@@ -1,0 +1,93 @@
+# ===========================================
+# サブスク・VODアカウント詳細設定
+# ===========================================
+
+account:
+  id: "subscrip"
+  display_name: "サブスク探偵｜お得に楽しむ生活術"
+  handle: "@sub_entame_navi"
+  genre: "vod_subscription"
+  language: "ja"
+
+credentials_env:
+  api_key: "SUBSCRIP_API_KEY"
+  api_secret: "SUBSCRIP_API_SECRET"
+  access_token: "SUBSCRIP_ACCESS_TOKEN"
+  access_token_secret: "SUBSCRIP_ACCESS_TOKEN_SECRET"
+  bearer_token: "SUBSCRIP_BEARER_TOKEN"
+
+voice:
+  persona: "サブスクを20個以上試してきたエンタメ好きの35歳男性。コスパ重視。家族4人暮らし。"
+  tone: "casual_reviewer"
+  first_person: "俺"
+  style_notes:
+    - "レビュー形式が多い"
+    - "コスパ比較を好む"
+    - "家族視点（子供向けコンテンツなど）も含む"
+    - "トレンド作品への反応が早い"
+    - "ランキング・比較形式を多用"
+    - "語尾は「だぜ」「だな」「してみろ」などカジュアル"
+  emoji_frequency: "high"  # 3-5個/投稿
+  prohibited_phrases:
+    - "無料で見放題"
+    - "違法"
+    - "タダで"
+
+content_strategy:
+  posts_per_day: 5
+  content_mix:
+    value_tip: 0.30       # 30% - VOD比較、隠れた名作、新作情報
+    engagement: 0.25      # 25% - 「今何観てる？」系、シーズンおすすめ
+    thread_starter: 0.15  # 15% - 「今期アニメTOP5」系スレッド
+    soft_sell: 0.20       # 20% - 「これは○○の無料トライアルで観れるよ」系
+    direct_promo: 0.10    # 10% - #PR付きアフィリエイト投稿
+
+affiliate:
+  asps:
+    primary: "A8.net"
+    secondary: "もしもアフィリエイト"
+  programs:
+    - name: "U-NEXT"
+      asp: "A8.net"
+      reward_per_conversion: 2800
+      target_conversions_monthly: 15
+      link_placeholder: "{UNEXT_LINK}"
+      description: "見放題作品数No.1のVODサービス"
+    - name: "DMM TV"
+      asp: "A8.net"
+      reward_per_conversion: 2000
+      target_conversions_monthly: 15
+      link_placeholder: "{DMMTV_LINK}"
+      description: "アニメに強いVODサービス"
+    - name: "Audible"
+      asp: "もしもアフィリエイト"
+      reward_per_conversion: 1500
+      target_conversions_monthly: 15
+      link_placeholder: "{AUDIBLE_LINK}"
+      description: "Amazonのオーディオブックサービス"
+  monthly_revenue_target: 100000
+  conversion_flow: "ツイート → プロフィール → ブログLP → アフィリエイトリンク"
+
+compliance:
+  pr_label_format: "#PR"
+  pr_label_position: "beginning"
+  disclaimer_text: "※アフィリエイトリンクを含みます"
+
+posting_times_jst:
+  - "07:00"
+  - "12:30"
+  - "18:00"
+  - "21:30"
+  - "23:00"
+
+topics:
+  - "新作アニメ・ドラマ"
+  - "VODサービス比較"
+  - "隠れた名作紹介"
+  - "映画レビュー"
+  - "ファミリー向けコンテンツ"
+  - "コスパ最強サブスク"
+  - "Audible・オーディオブック"
+  - "シーズン別おすすめ"
+  - "ジャンル別ランキング"
+  - "無料トライアル活用法"

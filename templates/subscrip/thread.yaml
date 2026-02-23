@@ -1,0 +1,54 @@
+# サブスク・VOD スレッド投稿テンプレート
+templates:
+  - topic: "VOD徹底比較"
+    parts:
+      - template: |
+          【{{ title }}】
+
+          {{ intro }}
+
+          全部比較していくぜ👇
+          ({{ part_num }}/{{ total_parts }})
+        variables:
+          title:
+            - "主要VOD6社を本気で比較してみた"
+            - "VODサービス完全ガイド2026年版"
+            - "サブスク20個試した俺が選ぶVODランキング"
+          intro:
+            - "U-NEXT、Netflix、DMM TV、Amazonプライム、\nHulu、Disney+...\n\nどれが一番コスパいいのか、\n全部使ってきた俺がガチで比較するぜ🔥"
+            - "VODサービス多すぎて選べない人のために、\n俺が全部のサービスを実際に使って\n徹底比較した結果を発表する📺"
+
+      - template: |
+          【{{ category }}】
+
+          {{ comparison }}
+          ({{ part_num }}/{{ total_parts }})
+        variables:
+          category:
+            - "コスパ比較💰"
+          comparison:
+            - "月額ランキング（安い順）：\n1️⃣ DMM TV：550円\n2️⃣ Amazonプライム：600円\n3️⃣ Hulu：1026円\n4️⃣ Netflix：990円〜\n5️⃣ Disney+：990円\n6️⃣ U-NEXT：2189円（実質989円）\n\nU-NEXTは高く見えるけど\n毎月1200ptもらえるから実質最安クラス🎯"
+
+      - template: |
+          【{{ category }}】
+
+          {{ comparison }}
+          ({{ part_num }}/{{ total_parts }})
+        variables:
+          category:
+            - "作品数・ジャンル比較📊"
+          comparison:
+            - "作品数：\n🥇 U-NEXT：31万本以上\n🥈 DMM TV：19万本以上\n🥉 Hulu：10万本以上\n\nジャンル別の強み：\n🎬 映画全般 → U-NEXT\n📺 アニメ → DMM TV\n🌍 海外ドラマ → Netflix\n🏰 ディズニー/マーベル → Disney+\n⚽ スポーツ → DAZN\n\n「全ジャンル制覇」は無理だから\n自分の好みで選ぶのが正解👍"
+
+      - template: |
+          【まとめ：俺のおすすめ組み合わせ】
+
+          {{ recommendation }}
+
+          {{ closing }}
+          ({{ part_num }}/{{ total_parts }})
+        variables:
+          recommendation:
+            - "タイプ別おすすめ：\n\n🎯 コスパ重視 → DMM TV（550円）\n🎯 作品数重視 → U-NEXT\n🎯 アニメ好き → DMM TV + U-NEXT\n🎯 家族向け → U-NEXT（4人まで同時視聴）\n🎯 海外ドラマ好き → Netflix"
+          closing:
+            - "全部無料トライアルがあるから、\n気になるサービスは片っ端から試すのがベスト🎬\n\n詳しい比較はプロフのリンクにまとめてるぜ👍\n\n参考になったらRT・いいねしてくれると嬉しい🙏"
