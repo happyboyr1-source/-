@@ -23,8 +23,7 @@ env/
 *.swo
 
 # Generated data
-data/generated/
-data/posted/
+data/
 calendar/*_month*.json
 
 # Logs
