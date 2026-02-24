@@ -31,17 +31,29 @@ DAY_CONTENT_MAP = {
 }
 
 
+# ジャンル名 → テンプレートディレクトリ名のマッピング
+GENRE_DIR_MAP = {
+    "career": "career",
+    "education": "english",
+    "vod_subscription": "subscrip",
+    # 直接ディレクトリ名でも指定可能
+    "english": "english",
+    "subscrip": "subscrip",
+}
+
+
 def load_templates(genre):
     """指定ジャンルの全テンプレートを読み込む
 
     Args:
-        genre: "career", "english", "subscrip"
+        genre: "career", "education", "vod_subscription" 等
 
     Returns:
         dict: {content_type: [template_dicts]}
     """
     templates = {}
-    genre_dir = TEMPLATE_DIR / genre
+    dir_name = GENRE_DIR_MAP.get(genre, genre)
+    genre_dir = TEMPLATE_DIR / dir_name
     if not genre_dir.exists():
         raise FileNotFoundError(f"テンプレートディレクトリが見つかりません: {genre_dir}")
 
