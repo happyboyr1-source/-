@@ -6,6 +6,10 @@ from pathlib import Path
 import yaml
 from dotenv import load_dotenv
 
+from src.logger import get_logger
+
+
+logger = get_logger(__name__)
 
 CONFIG_DIR = Path(__file__).parent.parent / "config"
 
@@ -69,7 +73,7 @@ def get_credentials(account_config):
     for key, env_var in creds_env.items():
         value = os.getenv(env_var, "")
         if not value:
-            print(f"  警告: 環境変数 {env_var} が設定されていません")
+            logger.warning("環境変数 %s が設定されていません", env_var)
         credentials[key] = value
     return credentials
 

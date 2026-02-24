@@ -16,38 +16,39 @@ from src.content_generator import generate_post, generate_daily_posts
 from src.poster import post_tweet, check_rate_limit
 from src.scheduler import create_scheduler, run_due_posts
 from src.compliance import clear_duplicate_cache
+from src.logger import setup_logging, get_logger
+from src.analytics import print_summary_report
 
+
+logger = get_logger(__name__)
 
 JST = timezone(timedelta(hours=9))
 
 
 def cmd_validate(args):
     """設定ファイルのバリデーション"""
-    print("=== 設定ファイル バリデーション ===\n")
+    logger.info("=== 設定ファイル バリデーション ===")
     results = validate_all_configs()
 
     all_ok = True
     for account_id, errors in results.items():
         if errors:
-            print(f"  [NG] {account_id}:")
-            for err in errors:
-                print(f"       - {err}")
+            logger.error("[NG] %s: %s", account_id, "; ".join(errors))
             all_ok = False
         else:
-            print(f"  [OK] {account_id}")
+            logger.info("[OK] %s", account_id)
 
-    print()
     if all_ok:
-        print("全アカウントの設定が正常です")
+        logger.info("全アカウントの設定が正常です")
     else:
-        print("エラーのある設定を修正してください")
+        logger.error("エラーのある設定を修正してください")
         sys.exit(1)
 
 
 def cmd_generate(args):
     """投稿プレビュー生成"""
     account_id = args.account
-    print(f"=== 投稿プレビュー: {account_id} ===\n")
+    logger.info("=== 投稿プレビュー: %s ===", account_id)
 
     config = load_account_config(account_id)
     genre = config["account"]["genre"]
@@ -58,15 +59,14 @@ def cmd_generate(args):
     posts = generate_daily_posts(genre, weekday, account_config=config, topics=topics)
 
     for i, post in enumerate(posts):
-        print(f"--- 投稿 {i + 1} ({post['content_type']}) ---")
-        print(post["text"])
+        logger.info("--- 投稿 %d (%s) ---", i + 1, post["content_type"])
+        logger.info("%s", post["text"])
         v = post["validation"]
-        print(f"  文字数: {v['char_count']}/280")
+        logger.info("  文字数: %d/280", v["char_count"])
         if v["errors"]:
-            print(f"  エラー: {', '.join(v['errors'])}")
+            logger.error("  エラー: %s", ", ".join(v["errors"]))
         if v["warnings"]:
-            print(f"  警告: {', '.join(v['warnings'])}")
-        print()
+            logger.warning("  警告: %s", ", ".join(v["warnings"]))
 
 
 def cmd_post(args):
@@ -75,17 +75,17 @@ def cmd_post(args):
     account_ids = get_all_account_ids() if args.account == "all" else [args.account]
 
     mode = "DRY RUN" if dry_run else "LIVE"
-    print(f"=== 即時投稿 ({mode}) ===\n")
+    logger.info("=== 即時投稿 (%s) ===", mode)
 
     # レート制限チェック
     can_post, remaining, limit_error = check_rate_limit()
-    print(f"  残り投稿可能数: {remaining}/500")
+    logger.info("残り投稿可能数: %d/500", remaining)
     if not can_post:
-        print(f"  [BLOCKED] {limit_error}")
+        logger.warning("[BLOCKED] %s", limit_error)
         return
 
     for account_id in account_ids:
-        print(f"\n--- {account_id} ---")
+        logger.info("--- %s ---", account_id)
         config = load_account_config(account_id)
         genre = config["account"]["genre"]
         topics = config.get("topics", [])
@@ -97,57 +97,124 @@ def cmd_post(args):
         if post["validation"]["is_valid"]:
             result = post_tweet(config, post["text"], dry_run=dry_run)
             if result["success"]:
-                print(f"  投稿成功: {post['text'][:50]}...")
+                logger.info("[%s] 投稿成功: %s...", account_id, post["text"][:50])
             else:
-                print(f"  投稿失敗: {result['error']}")
+                logger.error("[%s] 投稿失敗: %s", account_id, result["error"])
         else:
             errors = ", ".join(post["validation"]["errors"])
-            print(f"  バリデーションエラー: {errors}")
+            logger.error("[%s] バリデーションエラー: %s", account_id, errors)
 
 
 def cmd_schedule(args):
     """スケジューラー起動"""
     dry_run = args.dry_run
     mode = "DRY RUN" if dry_run else "LIVE"
-    print(f"=== スケジューラー起動 ({mode}) ===\n")
+    logger.info("=== スケジューラー起動 (%s) ===", mode)
 
     if args.due:
-        # cron用：現在時刻で実行すべき投稿を処理
-        print("  cron モード: 実行予定の投稿を確認中...\n")
+        logger.info("cron モード: 実行予定の投稿を確認中...")
         run_due_posts(dry_run=dry_run)
     else:
-        # 常駐モード
-        print("  常駐モード: Ctrl+C で停止\n")
+        logger.info("常駐モード: Ctrl+C で停止")
         scheduler = create_scheduler(dry_run=dry_run)
         try:
             scheduler.start()
         except (KeyboardInterrupt, SystemExit):
-            print("\n  スケジューラーを停止しました")
+            logger.info("スケジューラーを停止しました")
 
 
 def cmd_status(args):
     """ステータス表示"""
-    print("=== システムステータス ===\n")
+    logger.info("=== システムステータス ===")
 
     # レート制限
     can_post, remaining, limit_error = check_rate_limit()
-    print(f"  月間投稿残: {remaining}/500")
+    logger.info("月間投稿残: %d/500", remaining)
     if not can_post:
-        print(f"  警告: {limit_error}")
+        logger.warning("警告: %s", limit_error)
 
     # 各アカウント状態
-    print("\n--- アカウント ---")
+    logger.info("--- アカウント ---")
     for account_id in get_all_account_ids():
         try:
             config = load_account_config(account_id)
             name = config["account"]["display_name"]
             posts_per_day = config["content_strategy"]["posts_per_day"]
             times = config.get("posting_times_jst", [])
-            print(f"  [{account_id}] {name}")
-            print(f"    投稿/日: {posts_per_day}")
-            print(f"    投稿時間: {', '.join(times)}")
+            logger.info("[%s] %s", account_id, name)
+            logger.info("  投稿/日: %d", posts_per_day)
+            logger.info("  投稿時間: %s", ", ".join(times))
         except Exception as e:
-            print(f"  [{account_id}] エラー: {e}")
+            logger.error("[%s] エラー: %s", account_id, e)
+
+
+def cmd_report(args):
+    """投稿分析レポートを表示する"""
+    print_summary_report()
+
+
+def cmd_health(args):
+    """ヘルスチェック（Docker/監視システム用）
+
+    以下をチェックし、異常があれば非ゼロで終了:
+    - 設定ファイルの読み込み
+    - レート制限の状態
+    - テンプレートの存在
+    - データディレクトリの書き込み可能性
+    """
+    from pathlib import Path
+
+    checks = []
+
+    # 1. 設定ファイルチェック
+    try:
+        results = validate_all_configs()
+        config_errors = sum(1 for errs in results.values() if errs)
+        if config_errors > 0:
+            checks.append(("config", "FAIL", f"{config_errors}件のエラー"))
+        else:
+            checks.append(("config", "OK", f"{len(results)}アカウント正常"))
+    except Exception as e:
+        checks.append(("config", "FAIL", str(e)))
+
+    # 2. レート制限チェック
+    try:
+        can_post, remaining, limit_error = check_rate_limit()
+        if can_post:
+            checks.append(("rate_limit", "OK", f"残り{remaining}/500"))
+        else:
+            checks.append(("rate_limit", "WARN", limit_error))
+    except Exception as e:
+        checks.append(("rate_limit", "FAIL", str(e)))
+
+    # 3. テンプレートディレクトリチェック
+    template_dir = Path(__file__).parent.parent / "templates"
+    template_count = len(list(template_dir.glob("**/*.yaml")))
+    if template_count > 0:
+        checks.append(("templates", "OK", f"{template_count}テンプレート"))
+    else:
+        checks.append(("templates", "FAIL", "テンプレートが見つかりません"))
+
+    # 4. データディレクトリの書き込みチェック
+    data_dir = Path(__file__).parent.parent / "data"
+    try:
+        data_dir.mkdir(parents=True, exist_ok=True)
+        test_file = data_dir / ".health_check"
+        test_file.write_text("ok")
+        test_file.unlink()
+        checks.append(("data_dir", "OK", "書き込み可能"))
+    except OSError as e:
+        checks.append(("data_dir", "FAIL", str(e)))
+
+    # 結果出力
+    has_failure = False
+    for name, status, detail in checks:
+        logger.info("[%s] %s: %s", status, name, detail)
+        if status == "FAIL":
+            has_failure = True
+
+    if has_failure:
+        sys.exit(1)
 
 
 def main():
@@ -187,12 +254,21 @@ def main():
     sub = subparsers.add_parser("status", help="ステータス表示")
     sub.set_defaults(func=cmd_status)
 
+    # report
+    sub = subparsers.add_parser("report", help="投稿分析レポート")
+    sub.set_defaults(func=cmd_report)
+
+    # health
+    sub = subparsers.add_parser("health", help="ヘルスチェック")
+    sub.set_defaults(func=cmd_health)
+
     args = parser.parse_args()
 
     if args.command is None:
         parser.print_help()
         sys.exit(1)
 
+    setup_logging()
     args.func(args)
 
 

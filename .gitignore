@@ -22,7 +22,7 @@ env/
 *.swp
 *.swo
 
-# Generated data
+# Generated data (runtime)
 data/
 calendar/*_month*.json
 

@@ -15,6 +15,12 @@ from src.config_loader import load_account_config, get_all_account_ids
 from src.content_generator import generate_post, DAY_CONTENT_MAP
 from src.compliance import validate_post
 from src.poster import post_tweet
+from src.logger import get_logger
+from src.notifier import notify_post_failure
+from src.analytics import record_post
+
+
+logger = get_logger(__name__)
 
 
 # JST タイムゾーン
@@ -78,20 +84,27 @@ def execute_scheduled_post(account_id, slot_index, dry_run=False):
 
         if not post["validation"]["is_valid"]:
             errors = ", ".join(post["validation"]["errors"])
-            print(f"  [SKIP] [{account_id}] バリデーションエラー: {errors}")
+            logger.warning("[SKIP] [%s] バリデーションエラー: %s", account_id, errors)
             return
 
         # 投稿実行
         result = post_tweet(config, post["text"], dry_run=dry_run)
 
+        # 分析トラッキング
+        record_post(account_id, content_type, post["text"], result, dry_run=dry_run)
+
         if result["success"]:
             status = "DRY RUN" if dry_run else "SUCCESS"
-            print(f"  [{status}] [{account_id}] slot={slot_index} type={content_type}")
+            logger.info("[%s] [%s] slot=%d type=%s", status, account_id, slot_index, content_type)
         else:
-            print(f"  [FAIL] [{account_id}] {result['error']}")
+            logger.error("[FAIL] [%s] %s", account_id, result["error"])
+            if not dry_run:
+                account_name = config["account"]["display_name"]
+                notify_post_failure(account_name, result["error"])
 
     except Exception as e:
-        print(f"  [ERROR] [{account_id}] スケジュール投稿でエラー: {e}")
+        logger.error("[ERROR] [%s] スケジュール投稿でエラー: %s", account_id, e)
+        notify_post_failure(account_id, str(e))
 
 
 def create_scheduler(dry_run=False):
@@ -129,11 +142,13 @@ def create_scheduler(dry_run=False):
                     replace_existing=True,
                 )
 
-                print(f"  [SCHEDULED] {account_id} slot {slot_index}: "
-                      f"{slot['hour']}:{slot['minute']:02d} JST")
+                logger.info(
+                    "[SCHEDULED] %s slot %d: %d:%02d JST",
+                    account_id, slot_index, slot["hour"], slot["minute"],
+                )
 
         except Exception as e:
-            print(f"  [ERROR] {account_id} のスケジュール設定に失敗: {e}")
+            logger.error("[ERROR] %s のスケジュール設定に失敗: %s", account_id, e)
 
     return scheduler
 
@@ -160,8 +175,8 @@ def run_due_posts(dry_run=False):
 
                 # ±10分以内なら実行
                 if abs(current_minutes - slot_minutes) <= 10:
-                    print(f"  [DUE] {account_id} slot {slot_index} ({time_str})")
+                    logger.info("[DUE] %s slot %d (%s)", account_id, slot_index, time_str)
                     execute_scheduled_post(account_id, slot_index, dry_run=dry_run)
 
         except Exception as e:
-            print(f"  [ERROR] {account_id}: {e}")
+            logger.error("[ERROR] %s: %s", account_id, e)

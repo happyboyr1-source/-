@@ -13,7 +13,10 @@ from pathlib import Path
 import tweepy
 
 from src.config_loader import get_credentials
+from src.logger import get_logger
 
+
+logger = get_logger(__name__)
 
 # レート制限追跡ファイル
 RATE_LIMIT_FILE = Path(__file__).parent.parent / "data" / "rate_limits.json"
@@ -123,6 +126,7 @@ def post_tweet(account_config, text, dry_run=False):
     # レート制限チェック
     can_post, remaining, limit_error = check_rate_limit()
     if not can_post:
+        logger.warning("[%s] レート制限: %s", account_name, limit_error)
         return {
             "success": False,
             "tweet_id": None,
@@ -131,7 +135,7 @@ def post_tweet(account_config, text, dry_run=False):
         }
 
     if dry_run:
-        print(f"  [DRY RUN] [{account_name}] {text[:60]}...")
+        logger.info("[DRY RUN] [%s] %s...", account_name, text[:60])
         return {
             "success": True,
             "tweet_id": "dry_run_id",
@@ -146,7 +150,7 @@ def post_tweet(account_config, text, dry_run=False):
             response = client.create_tweet(text=text)
             _increment_rate_limit()
             tweet_id = response.data["id"]
-            print(f"  [POSTED] [{account_name}] ID:{tweet_id} - {text[:40]}...")
+            logger.info("[POSTED] [%s] ID:%s - %s...", account_name, tweet_id, text[:40])
             return {
                 "success": True,
                 "tweet_id": str(tweet_id),
@@ -155,14 +159,21 @@ def post_tweet(account_config, text, dry_run=False):
             }
         except tweepy.TooManyRequests:
             wait_time = RETRY_BASE_DELAY * (2 ** attempt)
-            print(f"  [RATE LIMIT] {wait_time}秒後にリトライします... ({attempt + 1}/{MAX_RETRIES})")
+            logger.warning(
+                "[RATE LIMIT] [%s] %d秒後にリトライ (%d/%d)",
+                account_name, wait_time, attempt + 1, MAX_RETRIES,
+            )
             time.sleep(wait_time)
         except tweepy.TweepyException as e:
             if attempt < MAX_RETRIES - 1:
                 wait_time = RETRY_BASE_DELAY * (2 ** attempt)
-                print(f"  [ERROR] {e} - {wait_time}秒後にリトライ ({attempt + 1}/{MAX_RETRIES})")
+                logger.warning(
+                    "[ERROR] [%s] %s - %d秒後にリトライ (%d/%d)",
+                    account_name, e, wait_time, attempt + 1, MAX_RETRIES,
+                )
                 time.sleep(wait_time)
             else:
+                logger.error("[FAIL] [%s] 投稿失敗: %s", account_name, e)
                 return {
                     "success": False,
                     "tweet_id": None,
@@ -170,6 +181,7 @@ def post_tweet(account_config, text, dry_run=False):
                     "dry_run": False,
                 }
 
+    logger.error("[FAIL] [%s] 最大リトライ回数超過", account_name)
     return {
         "success": False,
         "tweet_id": None,
@@ -189,6 +201,7 @@ def post_thread(account_config, texts, dry_run=False):
     Returns:
         list[dict]: 各ツイートの投稿結果リスト
     """
+    account_name = account_config["account"]["display_name"]
     results = []
     previous_tweet_id = None
 
@@ -201,6 +214,7 @@ def post_thread(account_config, texts, dry_run=False):
         # レート制限チェック
         can_post, _, limit_error = check_rate_limit()
         if not can_post:
+            logger.warning("[%s] スレッド中断 (%d/%d): %s", account_name, i + 1, len(texts), limit_error)
             results.append({
                 "success": False,
                 "tweet_id": None,
@@ -226,6 +240,7 @@ def post_thread(account_config, texts, dry_run=False):
                 "dry_run": False,
             })
         except tweepy.TweepyException as e:
+            logger.error("[%s] スレッド投稿失敗 (%d/%d): %s", account_name, i + 1, len(texts), e)
             results.append({
                 "success": False,
                 "tweet_id": None,

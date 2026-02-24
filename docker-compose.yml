@@ -1,0 +1,17 @@
+services:
+  bot:
+    build: .
+    container_name: x-affiliate-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    # ヘルスチェック（60秒間隔でステータス確認）
+    healthcheck:
+      test: ["CMD", "python", "src/bot.py", "health"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

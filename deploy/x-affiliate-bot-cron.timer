@@ -1,0 +1,10 @@
+[Unit]
+Description=X Affiliate Bot - 15分間隔の投稿チェック
+
+[Timer]
+OnCalendar=*:0/15
+Persistent=true
+RandomizedDelaySec=60
+
+[Install]
+WantedBy=timers.target

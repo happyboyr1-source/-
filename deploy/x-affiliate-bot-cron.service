@@ -1,0 +1,19 @@
+[Unit]
+Description=X Affiliate Bot - Cron Mode (投稿チェック)
+After=network.target
+
+[Service]
+Type=oneshot
+User=bot
+Group=bot
+WorkingDirectory=/opt/x-affiliate-bot
+Environment=PATH=/opt/x-affiliate-bot/venv/bin:/usr/local/bin:/usr/bin
+EnvironmentFile=/opt/x-affiliate-bot/.env
+ExecStart=/opt/x-affiliate-bot/venv/bin/python src/bot.py schedule --due
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=x-affiliate-bot-cron
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/x-affiliate-bot/data /opt/x-affiliate-bot/logs
