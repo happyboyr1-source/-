@@ -1,0 +1,27 @@
+[Unit]
+Description=X (Twitter) Affiliate Automation Bot
+After=network.target
+
+[Service]
+Type=simple
+User=bot
+Group=bot
+WorkingDirectory=/opt/x-affiliate-bot
+Environment=PATH=/opt/x-affiliate-bot/venv/bin:/usr/local/bin:/usr/bin
+EnvironmentFile=/opt/x-affiliate-bot/.env
+ExecStart=/opt/x-affiliate-bot/venv/bin/python scripts/run_all.py
+Restart=always
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=x-affiliate-bot
+
+# セキュリティ設定
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/x-affiliate-bot/data /opt/x-affiliate-bot/logs
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

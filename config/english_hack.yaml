@@ -1,0 +1,92 @@
+# ===========================================
+# オンライン英会話・教育アカウント詳細設定
+# ===========================================
+
+account:
+  id: "english"
+  display_name: "学びハック｜英語×スキルUP"
+  handle: "@english_hack_jp"
+  genre: "education"
+  language: "ja"
+
+credentials_env:
+  api_key: "ENGLISH_API_KEY"
+  api_secret: "ENGLISH_API_SECRET"
+  access_token: "ENGLISH_ACCESS_TOKEN"
+  access_token_secret: "ENGLISH_ACCESS_TOKEN_SECRET"
+  bearer_token: "ENGLISH_BEARER_TOKEN"
+
+voice:
+  persona: "文系卒から独学でプログラミングを学び、副業で月30万を稼ぐ28歳女性。英語学習も継続中。TOEIC850点。"
+  tone: "friendly_motivational"
+  first_person: "私"
+  style_notes:
+    - "失敗談→克服の物語形式"
+    - "学習の小さな成功体験を共有"
+    - "初心者目線を忘れない"
+    - "具体的な学習時間・進捗を提示"
+    - "語尾は「だよ」「してみて」「なの」など親しみやすい表現"
+  emoji_frequency: "medium"  # 2-4個/投稿
+  prohibited_phrases:
+    - "天才じゃなくても"
+    - "楽して"
+    - "誰でもすぐに"
+
+content_strategy:
+  posts_per_day: 5
+  content_mix:
+    value_tip: 0.35       # 35% - 学習Tips、英語フレーズ、無料リソース紹介
+    engagement: 0.25      # 25% - 「何を学んでる？」系の質問、応援投稿
+    thread_starter: 0.15  # 15% - 「X日間でOOを学んだ方法」系スレッド
+    soft_sell: 0.15       # 15% - 使っているサービスへのさりげない言及
+    direct_promo: 0.10    # 10% - #PR付きアフィリエイト投稿
+
+affiliate:
+  asps:
+    primary: "A8.net"
+    secondary: "もしもアフィリエイト"
+  programs:
+    - name: "DMM英会話"
+      asp: "もしもアフィリエイト"
+      reward_per_conversion: 3000
+      target_conversions_monthly: 15
+      link_placeholder: "{DMM_EIKAIWA_LINK}"
+      description: "24時間365日レッスン可能なオンライン英会話"
+    - name: "ネイティブキャンプ"
+      asp: "A8.net"
+      reward_per_conversion: 4000
+      target_conversions_monthly: 10
+      link_placeholder: "{NATIVE_CAMP_LINK}"
+      description: "レッスン回数無制限のオンライン英会話"
+    - name: "スタディサプリENGLISH"
+      asp: "A8.net"
+      reward_per_conversion: 3500
+      target_conversions_monthly: 10
+      link_placeholder: "{STUDYSAPURI_LINK}"
+      description: "TOEIC対策に特化したアプリ"
+  monthly_revenue_target: 100000
+  conversion_flow: "ツイート → プロフィール → ブログLP → アフィリエイトリンク"
+
+compliance:
+  pr_label_format: "#PR"
+  pr_label_position: "beginning"
+  disclaimer_text: "※アフィリエイトリンクを含みます"
+
+posting_times_jst:
+  - "06:30"
+  - "07:30"
+  - "12:00"
+  - "19:00"
+  - "22:00"
+
+topics:
+  - "英語フレーズ・表現"
+  - "TOEIC対策"
+  - "英会話上達法"
+  - "リスニング力UP"
+  - "ビジネス英語"
+  - "英語学習習慣化"
+  - "オンライン英会話比較"
+  - "発音矯正"
+  - "英語多読・多聴"
+  - "留学・海外経験"
